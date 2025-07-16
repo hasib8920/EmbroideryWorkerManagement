@@ -16,27 +16,18 @@ namespace EmbroideryWorkerManagement.Models
 
         [Required]
         public int Month { get; set; }
-        [Precision(18, 2)]
 
         public decimal BaseSalary { get; set; }
-        [Precision(18, 2)]
 
         public decimal OvertimeAmount { get; set; }
-        [Precision(18, 2)]
         public decimal TargetBonus { get; set; }
-        [Precision(18, 2)]
 
         public decimal ExtraBonus { get; set; }
-        [Precision(18, 2)]
 
         public decimal MealAllowance { get; set; }
-        [Precision(18, 2)]
-
         public decimal AdvanceDeduction { get; set; }
-        [Precision(18, 2)]
 
         public decimal TotalSalary { get; set; }
-        [Precision(18, 2)]
 
         public decimal NetSalary { get; set; }
 

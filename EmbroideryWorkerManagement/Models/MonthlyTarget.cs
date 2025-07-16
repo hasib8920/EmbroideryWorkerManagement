@@ -23,15 +23,12 @@ namespace EmbroideryWorkerManagement.Models
         [Range(0, int.MaxValue)]
         public int TargetUnits { get; set; }
 
-        [Precision(18, 2)]
         [Range(0, double.MaxValue)]
         public decimal BonusPerExtraUnit { get; set; }
 
-        [Precision(18, 2)]
         [Range(0, double.MaxValue)]
         public decimal DailyTargetBonusAmount { get; set; }
 
-        [Precision(18, 2)]
         [Range(0, double.MaxValue)]
         public decimal FullAttendanceBonus { get; set; }
     }

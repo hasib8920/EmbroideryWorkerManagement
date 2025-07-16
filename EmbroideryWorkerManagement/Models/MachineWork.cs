@@ -14,7 +14,6 @@ namespace EmbroideryWorkerManagement.Models
         public Worker Worker { get; set; }
 
         [Required(ErrorMessage = "Date is required.")]
-        [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
         [Required(ErrorMessage = "Units Produced is required.")]

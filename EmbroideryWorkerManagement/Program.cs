@@ -4,13 +4,17 @@ using EmbroideryWorkerManagement.Repositories;
 using EmbroideryWorkerManagement.Services.Interfaces;
 using EmbroideryWorkerManagement.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// PostgreSQL connection: UseNpgsql & connection string "DefaultConnection"
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("default")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Dependency Injection for repositories and services
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IWorkerService, WorkerService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
@@ -18,8 +22,11 @@ builder.Services.AddScoped<IAdvanceSalaryService, AdvanceSalaryService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<IMachineWorkService, MachineWorkService>();
 builder.Services.AddScoped<IMonthlyTargetService, MonthlyTargetService>();
-//builder.Services.AddScoped<IOvertimePolicyService, OvertimePolicyService>();
-//builder.Services.AddScoped<MonthlyPaymentCalculation>();
+
+// Optional services commented in your original code, enable if needed
+// builder.Services.AddScoped<IOvertimePolicyService, OvertimePolicyService>();
+// builder.Services.AddScoped<MonthlyPaymentCalculation>();
+
 builder.Services.AddScoped<PaymentSlipPdfService>();
 builder.Services.AddScoped<MonthlyPaymentService>();
 builder.Services.AddScoped<AutoSalaryGenerator>();
@@ -27,6 +34,14 @@ builder.Services.AddScoped<ISalaryCalculationService, SalaryCalculationService>(
 
 var app = builder.Build();
 
+// Apply migrations automatically on startup (Optional, but useful)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
+// Configure middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -34,14 +49,14 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); 
+app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseAuthorization();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Dashboard}/{action=Index}/{id?}");
-});
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
 app.Run();
