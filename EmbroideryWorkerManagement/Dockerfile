@@ -1,24 +1,22 @@
-# Stage 1: Build the application
+# -------- Build Stage --------
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copy csproj and restore dependencies
-COPY ["EmbroideryWorkerManagement.csproj", "./"]
-RUN dotnet restore "EmbroideryWorkerManagement.csproj"
+# নিচের path এ .csproj ফাইলটা আছে বলে ধরে নিচ্ছি
+COPY ["EmbroideryWorkerManagement/EmbroideryWorkerManagement.csproj", "EmbroideryWorkerManagement/"]
 
-# Copy all source files and publish the project
+WORKDIR /src/EmbroideryWorkerManagement
+RUN dotnet restore
+
 COPY . .
-RUN dotnet publish "EmbroideryWorkerManagement.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish -c Release -o /app/publish
 
-# Stage 2: Create runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+# -------- Runtime Stage --------
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 
-# Copy published files from build stage
 COPY --from=build /app/publish .
 
-# Expose port 80
 EXPOSE 80
 
-# Start the application
 ENTRYPOINT ["dotnet", "EmbroideryWorkerManagement.dll"]
